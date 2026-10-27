@@ -87,6 +87,18 @@ function formatStatus(match) {
   return `<div class="status-label tag-pendent">Per confirmar</div>`;
 }
 
+function formatMatchDate(m) {
+  try {
+    const d = new Date(`${m.isoDate}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return m.date;
+    const weekday = d.toLocaleDateString('ca-ES', { weekday: 'short' }).replace('.', '');
+    const month = d.toLocaleDateString('ca-ES', { month: 'short' }).replace('.', '');
+    return `${weekday} ${d.getDate()} ${month}`.toUpperCase();
+  } catch {
+    return m.date;
+  }
+}
+
 function teamBlock(name, logoUrl, side) {
   return `
     <div class="team ${side}">
@@ -100,11 +112,11 @@ function buildMatchCard(m) {
   card.className = 'match-row status-' + matchRowStatus(m);
 
   card.innerHTML = `
+    <div class="mr-date">${formatMatchDate(m)}</div>
     ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
     <div class="result">${formatStatus(m)}</div>
     ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
     <div class="meta">
-      <span>${m.date}</span>
       <span>${m.time && m.time !== '00:00' ? m.time : 'Hora per confirmar'}</span>
       <span>${m.field || 'Camp per confirmar'}</span>
       ${m.referee ? `<span>Àrbitre: ${m.referee}</span>` : ''}
