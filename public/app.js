@@ -271,11 +271,11 @@ function renderClassification(standings) {
     .map(
       (s) => `
     <tr>
-      <td>${s.position}</td>
-      <td class="team-cell">
+      <td class="crest-col">
         ${s.logoUrl ? `<img src="${s.logoUrl}" alt="${s.team}" onerror="this.style.display='none'">` : ''}
-        <span>${s.team}</span>
       </td>
+      <td>${s.position}</td>
+      <td class="team-cell">${s.team}</td>
       <td>${s.played}</td>
       <td>${s.won}</td>
       <td>${s.drawn}</td>
@@ -297,7 +297,7 @@ function renderClassification(standings) {
       <table class="classification-table">
         <thead>
           <tr>
-            <th>#</th><th>Equip</th><th>J</th><th>G</th><th>E</th><th>P</th>
+            <th class="crest-col"></th><th>#</th><th>Equip</th><th>J</th><th>G</th><th>E</th><th>P</th>
             <th>PF</th><th>PC</th><th>DP</th><th>AF</th><th>AC</th><th>BO</th><th>BD</th><th>Punts</th>
           </tr>
         </thead>

@@ -68,7 +68,7 @@ header p {
 }
 
 .app-top.collapsed header {
-  padding: 10px 20px 8px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 20px 8px;
 }
 
 .app-top.collapsed header h1 {
@@ -570,6 +570,7 @@ input:focus {
 .classification-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
 }
 
 .classification-table {
@@ -577,8 +578,6 @@ input:focus {
   border-collapse: separate;
   border-spacing: 0;
   background: var(--panel);
-  border-radius: 10px;
-  overflow: hidden;
   font-size: 0.85rem;
 }
 
@@ -601,12 +600,18 @@ input:focus {
 .classification-table td.team-cell {
   text-align: left;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  white-space: nowrap;
 }
 
-.classification-table td.team-cell img {
+.classification-table th.crest-col,
+.classification-table td.crest-col {
+  width: 40px;
+  padding-left: 10px;
+  padding-right: 6px;
+}
+
+.classification-table td.crest-col img {
+  display: block;
   width: 24px;
   height: 24px;
   object-fit: contain;
@@ -620,15 +625,28 @@ input:focus {
   color: var(--accent);
 }
 
+.classification-table th.crest-col,
+.classification-table td.crest-col,
 .classification-table th:last-child,
 .classification-table td:last-child {
   position: sticky;
-  right: 0;
   z-index: 1;
   background: var(--panel);
+}
+
+.classification-table th.crest-col,
+.classification-table td.crest-col {
+  left: 0;
+  box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.5);
+}
+
+.classification-table th:last-child,
+.classification-table td:last-child {
+  right: 0;
   box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.5);
 }
 
+.classification-table th.crest-col,
 .classification-table th:last-child {
   z-index: 2;
 }
@@ -641,6 +659,7 @@ input:focus {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.classification-table tbody tr:hover td.crest-col,
 .classification-table tbody tr:hover td:last-child {
   background: var(--border);
 }
