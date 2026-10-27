@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calendari Rugby — Segona Catalana Masculina</title>
+  <title>Calendari Rugby - Segona Catalana Masculina</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/dark.css" />
 </head>
 <body>
   <header>
-    <h1>Calendari — Segona Catalana Masculina</h1>
+    <h1>Calendari - Segona Catalana Masculina</h1>
     <p>Dades de Matchready / rugby.cat (Federació Catalana de Rugby)</p>
   </header>
 
@@ -27,8 +27,11 @@
         </select>
       </div>
       <div class="field">
-        <label for="date">Data concreta</label>
-        <input type="text" id="date" placeholder="Tria una jornada" autocomplete="off" />
+        <label>Data concreta</label>
+        <div class="date-picker-wrap">
+          <button type="button" id="dateButton" class="secondary" data-toggle>Tria una jornada</button>
+          <input type="hidden" id="date" data-input />
+        </div>
       </div>
       <div class="field">
         <button id="search">Cercar</button>

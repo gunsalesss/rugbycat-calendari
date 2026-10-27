@@ -121,6 +121,23 @@ button.secondary {
   border: 1px solid var(--border);
 }
 
+.date-picker-wrap {
+  position: relative;
+}
+
+.date-picker-wrap input[data-input] {
+  display: none;
+}
+
+#dateButton {
+  min-width: 160px;
+}
+
+#dateButton.active-date {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 #status {
   text-align: center;
   color: var(--muted);

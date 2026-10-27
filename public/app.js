@@ -1,5 +1,6 @@
 const teamSelect = document.getElementById('team');
 const dateInput = document.getElementById('date');
+const dateButton = document.getElementById('dateButton');
 const searchBtn = document.getElementById('search');
 const clearBtn = document.getElementById('clear');
 const statusEl = document.getElementById('status');
@@ -36,14 +37,28 @@ async function loadAvailableDates(team) {
   }
 }
 
+function updateDateButtonLabel(dateStr) {
+  if (!dateStr) {
+    dateButton.textContent = 'Tria una jornada';
+    dateButton.classList.remove('active-date');
+    return;
+  }
+  const [year, month, day] = dateStr.split('-');
+  dateButton.textContent = `${day}/${month}/${year}`;
+  dateButton.classList.add('active-date');
+}
+
 function initDatePicker() {
-  datePicker = flatpickr('#date', {
+  datePicker = flatpickr('.date-picker-wrap', {
+    wrap: true,
     dateFormat: 'Y-m-d',
-    altInput: true,
-    altFormat: 'd/m/Y',
     locale: typeof flatpickr !== 'undefined' && flatpickr.l10ns.cat ? 'cat' : undefined,
+    positionElement: dateButton,
     enable: [],
-    onChange: loadMatches,
+    onChange: (selectedDates, dateStr) => {
+      updateDateButtonLabel(dateStr);
+      loadMatches();
+    },
   });
 }
 
