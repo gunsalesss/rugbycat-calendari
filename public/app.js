@@ -9,6 +9,7 @@ const tabBtns = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
+const nextJornadaSection = document.getElementById('nextJornadaSection');
 
 let datePicker;
 
@@ -93,6 +94,25 @@ function teamBlock(name, logoUrl, side) {
     </div>`;
 }
 
+function buildMatchCard(m) {
+  const card = document.createElement('div');
+  card.className = 'match-card ' + matchStatusColor(m);
+
+  card.innerHTML = `
+    ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
+    <div class="result">${formatStatus(m)}</div>
+    ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
+    <div class="meta">
+      <span>📅 <strong>${m.date}</strong></span>
+      <span>🕒 <strong>${m.time || 'Per confirmar'}</strong></span>
+      <span>📍 <strong>${m.field || 'Per confirmar'}</strong></span>
+      ${m.referee ? `<span>🧑‍⚖️ ${m.referee}</span>` : ''}
+      ${m.actPdfUrl ? `<span><a href="${m.actPdfUrl}" target="_blank" rel="noopener">Acta PDF</a></span>` : ''}
+    </div>
+  `;
+  return card;
+}
+
 function renderMatches(matches) {
   matchesEl.innerHTML = '';
 
@@ -116,25 +136,55 @@ function renderMatches(matches) {
     section.appendChild(title);
 
     for (const m of group) {
-      const card = document.createElement('div');
-      card.className = 'match-card ' + matchStatusColor(m);
-
-      card.innerHTML = `
-        ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
-        <div class="result">${formatStatus(m)}</div>
-        ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
-        <div class="meta">
-          <span>📅 <strong>${m.date}</strong></span>
-          <span>🕒 <strong>${m.time || 'Per confirmar'}</strong></span>
-          <span>📍 <strong>${m.field || 'Per confirmar'}</strong></span>
-          ${m.referee ? `<span>🧑‍⚖️ ${m.referee}</span>` : ''}
-          ${m.actPdfUrl ? `<span><a href="${m.actPdfUrl}" target="_blank" rel="noopener">Acta PDF</a></span>` : ''}
-        </div>
-      `;
-      section.appendChild(card);
+      section.appendChild(buildMatchCard(m));
     }
 
     matchesEl.appendChild(section);
+  }
+}
+
+function getNextJornadaMatches(matches) {
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const upcoming = matches.filter((m) => m.isoDate >= todayIso);
+  if (!upcoming.length) return null;
+
+  const sorted = [...upcoming].sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime));
+  const jornadaName = sorted[0].jornada;
+  return matches.filter((m) => m.jornada === jornadaName);
+}
+
+function renderNextJornada(matches) {
+  const group = getNextJornadaMatches(matches);
+
+  if (!group || !group.length) {
+    nextJornadaSection.classList.add('hidden');
+    nextJornadaSection.innerHTML = '';
+    return;
+  }
+
+  const card = document.createElement('div');
+  card.className = 'next-jornada-card';
+  card.innerHTML = `
+    <span class="next-jornada-badge">⏭️ Propera jornada</span>
+    <h2 class="next-jornada-title">${group[0].jornada || 'Sense jornada'}</h2>
+  `;
+  for (const m of group) {
+    card.appendChild(buildMatchCard(m));
+  }
+
+  nextJornadaSection.innerHTML = '';
+  nextJornadaSection.appendChild(card);
+  nextJornadaSection.classList.remove('hidden');
+}
+
+async function loadNextJornada() {
+  try {
+    const res = await fetch('/api/matches');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Error desconegut');
+    renderNextJornada(data.matches);
+  } catch (err) {
+    nextJornadaSection.classList.add('hidden');
   }
 }
 
@@ -251,6 +301,7 @@ teamSelect.addEventListener('change', () => {
 const DEFAULT_TEAM = 'CR SPARTANS';
 
 initDatePicker();
+loadNextJornada();
 loadTeams()
   .then(() => {
     if ([...teamSelect.options].some((opt) => opt.value === DEFAULT_TEAM)) {
