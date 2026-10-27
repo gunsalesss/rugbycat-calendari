@@ -23,51 +23,57 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/dark.css" />
 </head>
 <body>
-  <header>
-    <h1>Calendari - Segona Catalana Masculina</h1>
-    <p>Dades de Matchready / rugby.cat (Federació Catalana de Rugby)</p>
-  </header>
+  <div class="app-shell">
+    <div class="app-top">
+      <header>
+        <h1>Calendari - Segona Catalana Masculina</h1>
+        <p>Dades de Matchready / rugby.cat (Federació Catalana de Rugby)</p>
+      </header>
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="calendar">Calendari</button>
-    <button class="tab-btn" data-tab="classification">Classificació</button>
-  </div>
-
-  <section id="calendarTab" class="tab-panel active">
-    <div class="controls">
-      <div class="field">
-        <label for="team">Equip</label>
-        <select id="team">
-          <option value="">Tots els equips</option>
-        </select>
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="calendar">Calendari</button>
+        <button class="tab-btn" data-tab="classification">Classificació</button>
       </div>
-      <div class="field">
-        <label>Data concreta</label>
-        <div class="date-picker-wrap">
-          <button type="button" id="dateButton" class="secondary" data-toggle>Tria una jornada</button>
-          <input type="hidden" id="date" data-input />
+
+      <div class="controls" id="calendarControls">
+        <div class="field">
+          <label for="team">Equip</label>
+          <select id="team">
+            <option value="">Tots els equips</option>
+          </select>
         </div>
-      </div>
-      <div class="field">
-        <button id="search">Cercar</button>
-      </div>
-      <div class="field">
-        <button id="clear" class="secondary">Veure calendari sencer</button>
+        <div class="field">
+          <label>Data concreta</label>
+          <div class="date-picker-wrap">
+            <button type="button" id="dateButton" class="secondary" data-toggle>Tria una jornada</button>
+            <input type="hidden" id="date" data-input />
+          </div>
+        </div>
+        <div class="field">
+          <button id="search">Cercar</button>
+        </div>
+        <div class="field">
+          <button id="clear" class="secondary">Veure calendari sencer</button>
+        </div>
       </div>
     </div>
 
-    <div id="status"></div>
-    <div id="matches"></div>
-  </section>
+    <main class="app-scroll">
+      <section id="calendarTab" class="tab-panel active">
+        <div id="status"></div>
+        <div id="matches"></div>
+      </section>
 
-  <section id="classificationTabPanel" class="tab-panel">
-    <div id="classificationStatus"></div>
-    <div id="classification"></div>
-  </section>
+      <section id="classificationTabPanel" class="tab-panel">
+        <div id="classificationStatus"></div>
+        <div id="classification"></div>
+      </section>
 
-  <footer>
-    Font: <a href="https://matchready.es/rugbycat/web/ca/public/calendar/56/37/combined/calendar/" target="_blank" rel="noopener">matchready.es</a>
-  </footer>
+      <footer>
+        Font: <a href="https://matchready.es/rugbycat/web/ca/public/calendar/56/37/combined/calendar/" target="_blank" rel="noopener">matchready.es</a>
+      </footer>
+    </main>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/cat.js"></script>
