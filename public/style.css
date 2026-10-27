@@ -55,12 +55,62 @@ header h1 {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   font-size: 1.4rem;
+  transition: font-size 0.15s ease;
 }
 
 header p {
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
+  overflow: hidden;
+  max-height: 40px;
+  transition: max-height 0.15s ease, opacity 0.15s ease, margin 0.15s ease;
+}
+
+.app-top.collapsed header {
+  padding: calc(10px + env(safe-area-inset-top, 0px)) 20px 8px;
+}
+
+.app-top.collapsed header h1 {
+  font-size: 1.05rem;
+}
+
+.app-top.collapsed header p {
+  max-height: 0;
+  opacity: 0;
+}
+
+.app-top.collapsed .tabs,
+.app-top.collapsed .controls {
+  display: none;
+}
+
+.header-collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.header-collapse-toggle:hover {
+  color: var(--accent);
+}
+
+.header-collapse-toggle .chevron {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.header-collapse-toggle[aria-expanded="false"] .chevron {
+  transform: rotate(180deg);
 }
 
 .tabs {
@@ -517,12 +567,19 @@ input:focus {
   margin-bottom: 12px;
 }
 
+.classification-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+}
+
 .classification-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 710px;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--panel);
-  border-radius: 10px;
-  overflow: hidden;
   font-size: 0.85rem;
 }
 
@@ -531,6 +588,7 @@ input:focus {
   padding: 10px 8px;
   text-align: center;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .classification-table th {
@@ -545,12 +603,39 @@ input:focus {
 .classification-table td.team-cell {
   text-align: left;
   font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.classification-table td.team-cell img {
+.classification-table th:first-child,
+.classification-table td:first-child {
+  width: 34px;
+}
+
+.classification-table th.crest-col,
+.classification-table td.crest-col {
+  width: 40px;
+  padding-left: 10px;
+  padding-right: 6px;
+}
+
+.classification-table th:nth-child(3),
+.classification-table td:nth-child(3) {
+  width: 150px;
+}
+
+.classification-table th:nth-child(n + 4):nth-child(-n + 14),
+.classification-table td:nth-child(n + 4):nth-child(-n + 14) {
+  width: 38px;
+}
+
+.classification-table th:last-child,
+.classification-table td:last-child {
+  width: 58px;
+}
+
+.classification-table td.crest-col img {
+  display: block;
   width: 24px;
   height: 24px;
   object-fit: contain;
@@ -564,12 +649,52 @@ input:focus {
   color: var(--accent);
 }
 
+.classification-table th:first-child,
+.classification-table td:first-child,
+.classification-table th.crest-col,
+.classification-table td.crest-col,
+.classification-table th:last-child,
+.classification-table td:last-child {
+  position: sticky;
+  z-index: 1;
+  background: var(--panel);
+}
+
+.classification-table th:first-child,
+.classification-table td:first-child {
+  left: 0;
+}
+
+.classification-table th.crest-col,
+.classification-table td.crest-col {
+  left: 34px;
+  box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.5);
+}
+
+.classification-table th:last-child,
+.classification-table td:last-child {
+  right: 0;
+  box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.5);
+}
+
+.classification-table th:first-child,
+.classification-table th.crest-col,
+.classification-table th:last-child {
+  z-index: 2;
+}
+
 .classification-table tbody tr:last-child td {
   border-bottom: none;
 }
 
 .classification-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+.classification-table tbody tr:hover td:first-child,
+.classification-table tbody tr:hover td.crest-col,
+.classification-table tbody tr:hover td:last-child {
+  background: var(--border);
 }
 
 .empty {

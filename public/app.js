@@ -13,6 +13,8 @@ const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
 const calendarControls = document.getElementById('calendarControls');
+const appTopEl = document.querySelector('.app-top');
+const headerCollapseToggle = document.getElementById('headerCollapseToggle');
 
 const { matchRowStatus, formatStatus, formatMatchDate, findNextJornadaName, hasActiveFilters } = MatchLogic;
 
@@ -270,10 +272,10 @@ function renderClassification(standings) {
       (s) => `
     <tr>
       <td>${s.position}</td>
-      <td class="team-cell">
+      <td class="crest-col">
         ${s.logoUrl ? `<img src="${s.logoUrl}" alt="${s.team}" onerror="this.style.display='none'">` : ''}
-        <span>${s.team}</span>
       </td>
+      <td class="team-cell">${s.team}</td>
       <td>${s.played}</td>
       <td>${s.won}</td>
       <td>${s.drawn}</td>
@@ -291,11 +293,11 @@ function renderClassification(standings) {
     .join('');
 
   classificationEl.innerHTML = `
-    <div style="overflow-x:auto">
+    <div class="classification-scroll">
       <table class="classification-table">
         <thead>
           <tr>
-            <th>#</th><th>Equip</th><th>J</th><th>G</th><th>E</th><th>P</th>
+            <th>#</th><th class="crest-col"></th><th>Equip</th><th>J</th><th>G</th><th>E</th><th>P</th>
             <th>PF</th><th>PC</th><th>DP</th><th>AF</th><th>AC</th><th>BO</th><th>BD</th><th>Punts</th>
           </tr>
         </thead>
@@ -346,6 +348,11 @@ dateClearBtn.addEventListener('click', (event) => {
 });
 teamToggleBtn.addEventListener('click', () => {
   setTeamGridOpen(teamGridEl.hidden);
+});
+headerCollapseToggle.addEventListener('click', () => {
+  const collapsed = appTopEl.classList.toggle('collapsed');
+  headerCollapseToggle.setAttribute('aria-expanded', String(!collapsed));
+  headerCollapseToggle.setAttribute('aria-label', collapsed ? 'Amplia la capçalera' : 'Redueix la capçalera');
 });
 
 const DEFAULT_TEAM = 'CR SPARTANS';
