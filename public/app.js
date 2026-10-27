@@ -1,6 +1,7 @@
 const teamSelect = document.getElementById('team');
 const dateInput = document.getElementById('date');
 const dateButton = document.getElementById('dateButton');
+const dateClearBtn = document.getElementById('dateClear');
 const searchBtn = document.getElementById('search');
 const clearBtn = document.getElementById('clear');
 const statusEl = document.getElementById('status');
@@ -10,6 +11,8 @@ const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
 const calendarControls = document.getElementById('calendarControls');
+
+const { matchRowStatus, formatStatus, formatMatchDate, findNextJornadaName, hasActiveFilters } = MatchLogic;
 
 let datePicker;
 
@@ -42,11 +45,13 @@ function updateDateButtonLabel(dateStr) {
   if (!dateStr) {
     dateButton.textContent = 'Tria una jornada';
     dateButton.classList.remove('active-date');
+    dateClearBtn.hidden = true;
     return;
   }
   const [year, month, day] = dateStr.split('-');
   dateButton.textContent = `${day}/${month}/${year}`;
   dateButton.classList.add('active-date');
+  dateClearBtn.hidden = false;
 }
 
 function initDatePicker() {
@@ -61,42 +66,6 @@ function initDatePicker() {
       loadMatches();
     },
   });
-}
-
-function isScheduleConfirmed(match) {
-  return Boolean(match.time && match.time !== '00:00' && match.field);
-}
-
-function matchRowStatus(match) {
-  if (match.status === 'postponed') return 'ajornat';
-  if (match.status === 'played') return 'jugat';
-  return isScheduleConfirmed(match) ? 'confirmat' : 'pendent';
-}
-
-function formatStatus(match) {
-  const state = matchRowStatus(match);
-  if (state === 'jugat') {
-    return `<div class="score">${match.score}</div><div class="status-label tag-jugat">Jugat</div>`;
-  }
-  if (state === 'ajornat') {
-    return `<div class="status-label tag-ajornat">Ajornat</div>`;
-  }
-  if (state === 'confirmat') {
-    return `<div class="time">${match.time}</div><div class="status-label tag-confirmat">Confirmat</div>`;
-  }
-  return `<div class="status-label tag-pendent">Per confirmar</div>`;
-}
-
-function formatMatchDate(m) {
-  try {
-    const d = new Date(`${m.isoDate}T00:00:00`);
-    if (Number.isNaN(d.getTime())) return m.date;
-    const weekday = d.toLocaleDateString('ca-ES', { weekday: 'short' }).replace('.', '');
-    const month = d.toLocaleDateString('ca-ES', { month: 'short' }).replace('.', '');
-    return `${weekday} ${d.getDate()} ${month}`.toUpperCase();
-  } catch {
-    return m.date;
-  }
 }
 
 function teamBlock(name, logoUrl, side) {
@@ -126,7 +95,7 @@ function buildMatchCard(m) {
   return card;
 }
 
-function renderMatches(matches) {
+function renderMatches(matches, { showNextJornadaDivider = true } = {}) {
   matchesEl.innerHTML = '';
 
   if (!matches.length) {
@@ -141,17 +110,15 @@ function renderMatches(matches) {
   }
 
   const todayIso = new Date().toISOString().slice(0, 10);
-  let dividerInserted = false;
+  const nextJornadaName = showNextJornadaDivider ? findNextJornadaName(matches, todayIso) : null;
 
   for (const [jornada, group] of groups) {
-    const isFutureGroup = group.some((m) => m.isoDate >= todayIso);
-    if (isFutureGroup && !dividerInserted) {
+    if (jornada === nextJornadaName) {
       const divider = document.createElement('div');
       divider.id = 'nextJornadaDivider';
       divider.className = 'jornada-divider';
       divider.textContent = 'Propera jornada';
       matchesEl.appendChild(divider);
-      dividerInserted = true;
     }
 
     const section = document.createElement('div');
@@ -177,7 +144,7 @@ function scrollToNextJornada() {
 }
 
 function updateClearButtonState() {
-  clearBtn.disabled = !teamSelect.value && !dateInput.value;
+  clearBtn.disabled = !hasActiveFilters(teamSelect.value, dateInput.value);
 }
 
 async function loadMatches() {
@@ -201,7 +168,7 @@ async function loadMatches() {
     parts.push(`${data.count} partit(s)`);
     statusEl.textContent = parts.join(' · ');
 
-    renderMatches(data.matches);
+    renderMatches(data.matches, { showNextJornadaDivider: !date });
   } catch (err) {
     statusEl.textContent = '';
     matchesEl.innerHTML = `<p class="empty">Error carregant el calendari: ${err.message}</p>`;
@@ -286,6 +253,10 @@ clearBtn.addEventListener('click', () => {
   teamSelect.value = '';
   datePicker.clear(true);
   loadAvailableDates('');
+});
+dateClearBtn.addEventListener('click', (event) => {
+  event.stopPropagation();
+  datePicker.clear(true);
 });
 teamSelect.addEventListener('change', () => {
   loadAvailableDates(teamSelect.value);
