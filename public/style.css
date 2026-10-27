@@ -126,14 +126,40 @@ header p {
   min-width: 0;
 }
 
+.team-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+  justify-content: space-between;
+}
+
+.team-toggle .chevron {
+  font-size: 0.75rem;
+  transition: transform 0.15s ease;
+}
+
+.team-toggle[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.team-toggle[aria-expanded="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .team-grid {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(2, auto);
   gap: 8px;
   overflow-x: auto;
-  padding: 2px 2px 8px;
+  padding: 10px 2px 8px;
   -webkit-overflow-scrolling: touch;
+}
+
+.team-grid[hidden] {
+  display: none;
 }
 
 .team-tile {

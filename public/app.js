@@ -1,4 +1,6 @@
 const teamGridEl = document.getElementById('teamGrid');
+const teamToggleBtn = document.getElementById('teamToggle');
+const teamToggleLabel = document.getElementById('teamToggleLabel');
 const dateInput = document.getElementById('date');
 const dateButton = document.getElementById('dateButton');
 const dateClearBtn = document.getElementById('dateClear');
@@ -69,6 +71,7 @@ function updateTeamGridSelection() {
     tile.classList.toggle('active', isActive);
     tile.setAttribute('aria-pressed', String(isActive));
   });
+  teamToggleLabel.textContent = selectedTeam || 'Tots els equips';
 }
 
 function renderTeamGrid(teams) {
@@ -80,9 +83,15 @@ function renderTeamGrid(teams) {
   updateTeamGridSelection();
 }
 
+function setTeamGridOpen(open) {
+  teamGridEl.hidden = !open;
+  teamToggleBtn.setAttribute('aria-expanded', String(open));
+}
+
 function selectTeam(team) {
   selectedTeam = team;
   updateTeamGridSelection();
+  setTeamGridOpen(false);
   loadAvailableDates(selectedTeam);
   loadMatches();
 }
@@ -327,12 +336,16 @@ searchBtn.addEventListener('click', loadMatches);
 clearBtn.addEventListener('click', () => {
   selectedTeam = '';
   updateTeamGridSelection();
+  setTeamGridOpen(false);
   datePicker.clear(true);
   loadAvailableDates('');
 });
 dateClearBtn.addEventListener('click', (event) => {
   event.stopPropagation();
   datePicker.clear(true);
+});
+teamToggleBtn.addEventListener('click', () => {
+  setTeamGridOpen(teamGridEl.hidden);
 });
 
 const DEFAULT_TEAM = 'CR SPARTANS';
