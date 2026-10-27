@@ -37,11 +37,19 @@
       </div>
 
       <div class="controls" id="calendarControls">
-        <div class="field">
-          <label for="team">Equip</label>
-          <select id="team">
-            <option value="">Tots els equips</option>
-          </select>
+        <div class="field team-field">
+          <label>Equip</label>
+          <button
+            type="button"
+            id="teamToggle"
+            class="secondary team-toggle"
+            aria-expanded="false"
+            aria-controls="teamGrid"
+          >
+            <span id="teamToggleLabel">Tots els equips</span>
+            <span class="chevron" aria-hidden="true">▾</span>
+          </button>
+          <div id="teamGrid" class="team-grid" role="group" aria-label="Selecciona un equip" hidden></div>
         </div>
         <div class="field">
           <label>Data concreta</label>

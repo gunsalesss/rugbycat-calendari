@@ -1,4 +1,6 @@
-const teamSelect = document.getElementById('team');
+const teamGridEl = document.getElementById('teamGrid');
+const teamToggleBtn = document.getElementById('teamToggle');
+const teamToggleLabel = document.getElementById('teamToggleLabel');
 const dateInput = document.getElementById('date');
 const dateButton = document.getElementById('dateButton');
 const dateClearBtn = document.getElementById('dateClear');
@@ -15,16 +17,98 @@ const calendarControls = document.getElementById('calendarControls');
 const { matchRowStatus, formatStatus, formatMatchDate, findNextJornadaName, hasActiveFilters } = MatchLogic;
 
 let datePicker;
+let selectedTeam = '';
+
+function teamInitials(name) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+function buildCrestFallback(name) {
+  const fallback = document.createElement('div');
+  fallback.className = 'team-tile-crest-fallback';
+  fallback.textContent = teamInitials(name);
+  return fallback;
+}
+
+function buildTeamTile(name, logoUrl) {
+  const isAllTeams = name === null;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'team-tile' + (isAllTeams ? ' team-tile-all' : '');
+  btn.dataset.team = isAllTeams ? '' : name;
+  btn.title = isAllTeams ? 'Tots els equips' : name;
+  btn.setAttribute('aria-pressed', 'false');
+
+  if (!isAllTeams) {
+    if (logoUrl) {
+      const img = document.createElement('img');
+      img.src = logoUrl;
+      img.alt = '';
+      img.addEventListener('error', () => img.replaceWith(buildCrestFallback(name)), { once: true });
+      btn.appendChild(img);
+    } else {
+      btn.appendChild(buildCrestFallback(name));
+    }
+  }
+
+  const label = document.createElement('span');
+  label.textContent = isAllTeams ? 'Tots' : name;
+  btn.appendChild(label);
+
+  btn.addEventListener('click', () => selectTeam(isAllTeams ? '' : name));
+  return btn;
+}
+
+function updateTeamGridSelection() {
+  teamGridEl.querySelectorAll('.team-tile').forEach((tile) => {
+    const isActive = tile.dataset.team === selectedTeam;
+    tile.classList.toggle('active', isActive);
+    tile.setAttribute('aria-pressed', String(isActive));
+  });
+  teamToggleLabel.textContent = selectedTeam || 'Tots els equips';
+}
+
+function renderTeamGrid(teams) {
+  teamGridEl.innerHTML = '';
+  teamGridEl.appendChild(buildTeamTile(null, null));
+  for (const [name, logoUrl] of teams) {
+    teamGridEl.appendChild(buildTeamTile(name, logoUrl));
+  }
+  updateTeamGridSelection();
+}
+
+function setTeamGridOpen(open) {
+  teamGridEl.hidden = !open;
+  teamToggleBtn.setAttribute('aria-expanded', String(open));
+}
+
+function selectTeam(team) {
+  selectedTeam = team;
+  updateTeamGridSelection();
+  setTeamGridOpen(false);
+  loadAvailableDates(selectedTeam);
+  loadMatches();
+}
 
 async function loadTeams() {
-  const res = await fetch('/api/teams');
+  const res = await fetch('/api/matches');
   const data = await res.json();
-  for (const team of data.teams) {
-    const opt = document.createElement('option');
-    opt.value = team;
-    opt.textContent = team;
-    teamSelect.appendChild(opt);
+
+  const logos = new Map();
+  for (const m of data.matches) {
+    if (m.isPlaceholder) continue;
+    if (m.homeTeam && !logos.has(m.homeTeam)) logos.set(m.homeTeam, m.homeLogoUrl || null);
+    if (m.awayTeam && !logos.has(m.awayTeam)) logos.set(m.awayTeam, m.awayLogoUrl || null);
   }
+
+  const teams = [...logos.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  renderTeamGrid(teams);
 }
 
 async function loadAvailableDates(team) {
@@ -144,12 +228,12 @@ function scrollToNextJornada() {
 }
 
 function updateClearButtonState() {
-  clearBtn.disabled = !hasActiveFilters(teamSelect.value, dateInput.value);
+  clearBtn.disabled = !hasActiveFilters(selectedTeam, dateInput.value);
 }
 
 async function loadMatches() {
   updateClearButtonState();
-  const team = teamSelect.value;
+  const team = selectedTeam;
   const date = dateInput.value;
 
   const params = new URLSearchParams();
@@ -250,7 +334,9 @@ tabBtns.forEach((btn) => btn.addEventListener('click', () => switchTab(btn.datas
 
 searchBtn.addEventListener('click', loadMatches);
 clearBtn.addEventListener('click', () => {
-  teamSelect.value = '';
+  selectedTeam = '';
+  updateTeamGridSelection();
+  setTeamGridOpen(false);
   datePicker.clear(true);
   loadAvailableDates('');
 });
@@ -258,9 +344,8 @@ dateClearBtn.addEventListener('click', (event) => {
   event.stopPropagation();
   datePicker.clear(true);
 });
-teamSelect.addEventListener('change', () => {
-  loadAvailableDates(teamSelect.value);
-  loadMatches();
+teamToggleBtn.addEventListener('click', () => {
+  setTeamGridOpen(teamGridEl.hidden);
 });
 
 const DEFAULT_TEAM = 'CR SPARTANS';
@@ -268,10 +353,10 @@ const DEFAULT_TEAM = 'CR SPARTANS';
 initDatePicker();
 loadTeams()
   .then(() => {
-    if ([...teamSelect.options].some((opt) => opt.value === DEFAULT_TEAM)) {
-      teamSelect.value = DEFAULT_TEAM;
-    }
-    return loadAvailableDates(teamSelect.value);
+    const hasDefaultTeam = Boolean(teamGridEl.querySelector(`[data-team="${CSS.escape(DEFAULT_TEAM)}"]`));
+    selectedTeam = hasDefaultTeam ? DEFAULT_TEAM : '';
+    updateTeamGridSelection();
+    return loadAvailableDates(selectedTeam);
   })
   .then(loadMatches)
   .then(scrollToNextJornada);
