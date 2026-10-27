@@ -293,7 +293,7 @@ function renderClassification(standings) {
     .join('');
 
   classificationEl.innerHTML = `
-    <div style="overflow-x:auto">
+    <div class="classification-scroll">
       <table class="classification-table">
         <thead>
           <tr>

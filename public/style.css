@@ -44,7 +44,6 @@ body {
 }
 
 header {
-  position: relative;
   padding: 24px 20px 12px;
   text-align: center;
 }
@@ -87,23 +86,21 @@ header p {
 }
 
 .header-collapse-toggle {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 6px 0;
+  border: none;
+  border-top: 1px solid var(--border);
   background: transparent;
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .header-collapse-toggle:hover {
-  border-color: var(--accent);
   color: var(--accent);
 }
 
@@ -570,9 +567,15 @@ input:focus {
   margin-bottom: 12px;
 }
 
+.classification-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .classification-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background: var(--panel);
   border-radius: 10px;
   overflow: hidden;
