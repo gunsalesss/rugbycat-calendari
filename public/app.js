@@ -13,6 +13,8 @@ const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
 const calendarControls = document.getElementById('calendarControls');
+const headerEl = document.querySelector('header');
+const headerCollapseToggle = document.getElementById('headerCollapseToggle');
 
 const { matchRowStatus, formatStatus, formatMatchDate, findNextJornadaName, hasActiveFilters } = MatchLogic;
 
@@ -346,6 +348,11 @@ dateClearBtn.addEventListener('click', (event) => {
 });
 teamToggleBtn.addEventListener('click', () => {
   setTeamGridOpen(teamGridEl.hidden);
+});
+headerCollapseToggle.addEventListener('click', () => {
+  const collapsed = headerEl.classList.toggle('collapsed');
+  headerCollapseToggle.setAttribute('aria-expanded', String(!collapsed));
+  headerCollapseToggle.setAttribute('aria-label', collapsed ? 'Amplia la capçalera' : 'Redueix la capçalera');
 });
 
 const DEFAULT_TEAM = 'CR SPARTANS';

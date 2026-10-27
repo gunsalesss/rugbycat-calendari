@@ -44,6 +44,7 @@ body {
 }
 
 header {
+  position: relative;
   padding: 24px 20px 12px;
   text-align: center;
 }
@@ -55,12 +56,59 @@ header h1 {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   font-size: 1.4rem;
+  transition: font-size 0.15s ease;
 }
 
 header p {
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
+  overflow: hidden;
+  max-height: 40px;
+  transition: max-height 0.15s ease, opacity 0.15s ease, margin 0.15s ease;
+}
+
+header.collapsed {
+  padding: 10px 20px 8px;
+}
+
+header.collapsed h1 {
+  font-size: 1.05rem;
+}
+
+header.collapsed p {
+  max-height: 0;
+  opacity: 0;
+}
+
+.header-collapse-toggle {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.header-collapse-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.header-collapse-toggle .chevron {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.header-collapse-toggle[aria-expanded="false"] .chevron {
+  transform: rotate(180deg);
 }
 
 .tabs {
@@ -564,12 +612,29 @@ input:focus {
   color: var(--accent);
 }
 
+.classification-table th:last-child,
+.classification-table td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: var(--panel);
+  box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.5);
+}
+
+.classification-table th:last-child {
+  z-index: 2;
+}
+
 .classification-table tbody tr:last-child td {
   border-bottom: none;
 }
 
 .classification-table tbody tr:hover {
   background: rgba(255, 255, 255, 0.03);
+}
+
+.classification-table tbody tr:hover td:last-child {
+  background: var(--border);
 }
 
 .empty {
