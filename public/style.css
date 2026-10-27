@@ -384,7 +384,14 @@ input:focus {
 }
 
 .flatpickr-day.today {
-  border-color: var(--accent);
+  border: 2px solid var(--accent);
+}
+
+.flatpickr-day.today.flatpickr-disabled,
+.flatpickr-day.today.flatpickr-disabled:hover {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  opacity: 1;
 }
 
 #status {
