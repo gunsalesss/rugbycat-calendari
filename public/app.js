@@ -176,7 +176,12 @@ function scrollToNextJornada() {
   }
 }
 
+function updateClearButtonState() {
+  clearBtn.disabled = !teamSelect.value && !dateInput.value;
+}
+
 async function loadMatches() {
+  updateClearButtonState();
   const team = teamSelect.value;
   const date = dateInput.value;
 

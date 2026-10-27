@@ -162,6 +162,15 @@ button:hover {
   color: var(--accent);
 }
 
+button:disabled,
+button:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--muted);
+}
+
 select:focus,
 button:focus,
 input:focus {
