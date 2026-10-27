@@ -82,6 +82,12 @@ app.get('/api/classification', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Calendari rugby escoltant a http://localhost:${PORT}`);
-});
+// En producció a Vercel, aquest fitxer es carrega com a funció serverless
+// (vegeu api/index.js) i mai s'executa directament amb `node`.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Calendari rugby escoltant a http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
