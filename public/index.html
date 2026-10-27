@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calendari Rugby — Segona Catalana Masculina</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/themes/dark.css" />
+</head>
+<body>
+  <header>
+    <h1>Calendari — Segona Catalana Masculina</h1>
+    <p>Dades de Matchready / rugby.cat (Federació Catalana de Rugby)</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="calendar">Calendari</button>
+    <button class="tab-btn" data-tab="classification">Classificació</button>
+  </div>
+
+  <section id="calendarTab" class="tab-panel active">
+    <div class="controls">
+      <div class="field">
+        <label for="team">Equip</label>
+        <select id="team">
+          <option value="">Tots els equips</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="date">Data concreta</label>
+        <input type="text" id="date" placeholder="Tria una jornada" autocomplete="off" />
+      </div>
+      <div class="field">
+        <button id="search">Cercar</button>
+      </div>
+      <div class="field">
+        <button id="clear" class="secondary">Veure calendari sencer</button>
+      </div>
+    </div>
+
+    <div id="status"></div>
+    <div id="matches"></div>
+  </section>
+
+  <section id="classificationTabPanel" class="tab-panel">
+    <div id="classificationStatus"></div>
+    <div id="classification"></div>
+  </section>
+
+  <footer>
+    Font: <a href="https://matchready.es/rugbycat/web/ca/public/calendar/56/37/combined/calendar/" target="_blank" rel="noopener">matchready.es</a>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/l10n/cat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
