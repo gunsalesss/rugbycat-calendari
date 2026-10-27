@@ -121,6 +121,83 @@ header p {
   color: var(--muted);
 }
 
+.team-field {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.team-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.team-tile {
+  width: 62px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 4px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  min-height: 62px;
+}
+
+.team-tile img,
+.team-tile-crest-fallback {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: #fff;
+}
+
+.team-tile-crest-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bg);
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.team-tile span {
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 0.56rem;
+  line-height: 1.1;
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.team-tile.team-tile-all span {
+  font-size: 0.62rem;
+}
+
+.team-tile:hover {
+  border-color: var(--accent);
+}
+
+.team-tile.active {
+  border-color: var(--accent);
+  background: rgba(216, 171, 74, 0.1);
+  color: var(--accent);
+}
+
 select, input[type="date"] {
   padding: 10px 12px;
   border-radius: 3px;
@@ -238,6 +315,7 @@ input:focus {
   text-align: center;
   color: var(--muted);
   min-height: 20px;
+  margin-top: 16px;
   margin-bottom: 8px;
 }
 
@@ -409,6 +487,7 @@ input:focus {
   text-align: center;
   color: var(--muted);
   min-height: 20px;
+  margin-top: 16px;
   margin-bottom: 12px;
 }
 
