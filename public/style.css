@@ -68,17 +68,22 @@ header p {
   transition: max-height 0.15s ease, opacity 0.15s ease, margin 0.15s ease;
 }
 
-header.collapsed {
+.app-top.collapsed header {
   padding: 10px 20px 8px;
 }
 
-header.collapsed h1 {
+.app-top.collapsed header h1 {
   font-size: 1.05rem;
 }
 
-header.collapsed p {
+.app-top.collapsed header p {
   max-height: 0;
   opacity: 0;
+}
+
+.app-top.collapsed .tabs,
+.app-top.collapsed .controls {
+  display: none;
 }
 
 .header-collapse-toggle {
