@@ -93,6 +93,25 @@ function teamBlock(name, logoUrl, side) {
     </div>`;
 }
 
+function buildMatchCard(m) {
+  const card = document.createElement('div');
+  card.className = 'match-card ' + matchStatusColor(m);
+
+  card.innerHTML = `
+    ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
+    <div class="result">${formatStatus(m)}</div>
+    ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
+    <div class="meta">
+      <span>📅 <strong>${m.date}</strong></span>
+      <span>🕒 <strong>${m.time || 'Per confirmar'}</strong></span>
+      <span>📍 <strong>${m.field || 'Per confirmar'}</strong></span>
+      ${m.referee ? `<span>🧑‍⚖️ ${m.referee}</span>` : ''}
+      ${m.actPdfUrl ? `<span><a href="${m.actPdfUrl}" target="_blank" rel="noopener">Acta PDF</a></span>` : ''}
+    </div>
+  `;
+  return card;
+}
+
 function renderMatches(matches) {
   matchesEl.innerHTML = '';
 
@@ -107,7 +126,20 @@ function renderMatches(matches) {
     groups.get(m.jornada).push(m);
   }
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+  let dividerInserted = false;
+
   for (const [jornada, group] of groups) {
+    const isFutureGroup = group.some((m) => m.isoDate >= todayIso);
+    if (isFutureGroup && !dividerInserted) {
+      const divider = document.createElement('div');
+      divider.id = 'nextJornadaDivider';
+      divider.className = 'jornada-divider';
+      divider.textContent = 'Propera jornada';
+      matchesEl.appendChild(divider);
+      dividerInserted = true;
+    }
+
     const section = document.createElement('div');
     section.className = 'jornada-group';
 
@@ -116,25 +148,17 @@ function renderMatches(matches) {
     section.appendChild(title);
 
     for (const m of group) {
-      const card = document.createElement('div');
-      card.className = 'match-card ' + matchStatusColor(m);
-
-      card.innerHTML = `
-        ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
-        <div class="result">${formatStatus(m)}</div>
-        ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
-        <div class="meta">
-          <span>📅 <strong>${m.date}</strong></span>
-          <span>🕒 <strong>${m.time || 'Per confirmar'}</strong></span>
-          <span>📍 <strong>${m.field || 'Per confirmar'}</strong></span>
-          ${m.referee ? `<span>🧑‍⚖️ ${m.referee}</span>` : ''}
-          ${m.actPdfUrl ? `<span><a href="${m.actPdfUrl}" target="_blank" rel="noopener">Acta PDF</a></span>` : ''}
-        </div>
-      `;
-      section.appendChild(card);
+      section.appendChild(buildMatchCard(m));
     }
 
     matchesEl.appendChild(section);
+  }
+}
+
+function scrollToNextJornada() {
+  const divider = document.getElementById('nextJornadaDivider');
+  if (divider) {
+    divider.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -258,4 +282,5 @@ loadTeams()
     }
     return loadAvailableDates(teamSelect.value);
   })
-  .then(loadMatches);
+  .then(loadMatches)
+  .then(scrollToNextJornada);
