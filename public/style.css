@@ -575,6 +575,8 @@ input:focus {
 
 .classification-table {
   width: 100%;
+  min-width: 710px;
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0;
   background: var(--panel);
@@ -586,6 +588,7 @@ input:focus {
   padding: 10px 8px;
   text-align: center;
   border-bottom: 1px solid var(--border);
+  overflow: hidden;
 }
 
 .classification-table th {
@@ -601,11 +604,12 @@ input:focus {
   text-align: left;
   font-weight: 700;
   white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .classification-table th:first-child,
 .classification-table td:first-child {
-  width: 32px;
+  width: 34px;
 }
 
 .classification-table th.crest-col,
@@ -613,6 +617,21 @@ input:focus {
   width: 40px;
   padding-left: 10px;
   padding-right: 6px;
+}
+
+.classification-table th:nth-child(3),
+.classification-table td:nth-child(3) {
+  width: 150px;
+}
+
+.classification-table th:nth-child(n + 4):nth-child(-n + 14),
+.classification-table td:nth-child(n + 4):nth-child(-n + 14) {
+  width: 38px;
+}
+
+.classification-table th:last-child,
+.classification-table td:last-child {
+  width: 58px;
 }
 
 .classification-table td.crest-col img {
@@ -648,7 +667,7 @@ input:focus {
 
 .classification-table th.crest-col,
 .classification-table td.crest-col {
-  left: 32px;
+  left: 34px;
   box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.5);
 }
 
