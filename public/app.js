@@ -9,6 +9,7 @@ const tabBtns = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
+const calendarControls = document.getElementById('calendarControls');
 
 let datePicker;
 
@@ -256,6 +257,7 @@ function switchTab(tab) {
   tabPanels.forEach((panel) =>
     panel.classList.toggle('active', panel.id === (tab === 'calendar' ? 'calendarTab' : 'classificationTabPanel'))
   );
+  calendarControls.style.display = tab === 'calendar' ? '' : 'none';
   if (tab === 'classification') loadClassification();
 }
 
