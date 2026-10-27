@@ -603,6 +603,11 @@ input:focus {
   white-space: nowrap;
 }
 
+.classification-table th:first-child,
+.classification-table td:first-child {
+  width: 32px;
+}
+
 .classification-table th.crest-col,
 .classification-table td.crest-col {
   width: 40px;
@@ -625,6 +630,8 @@ input:focus {
   color: var(--accent);
 }
 
+.classification-table th:first-child,
+.classification-table td:first-child,
 .classification-table th.crest-col,
 .classification-table td.crest-col,
 .classification-table th:last-child,
@@ -634,9 +641,14 @@ input:focus {
   background: var(--panel);
 }
 
+.classification-table th:first-child,
+.classification-table td:first-child {
+  left: 0;
+}
+
 .classification-table th.crest-col,
 .classification-table td.crest-col {
-  left: 0;
+  left: 32px;
   box-shadow: 6px 0 8px -6px rgba(0, 0, 0, 0.5);
 }
 
@@ -646,6 +658,7 @@ input:focus {
   box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.5);
 }
 
+.classification-table th:first-child,
 .classification-table th.crest-col,
 .classification-table th:last-child {
   z-index: 2;
@@ -659,6 +672,7 @@ input:focus {
   background: rgba(255, 255, 255, 0.03);
 }
 
+.classification-table tbody tr:hover td:first-child,
 .classification-table tbody tr:hover td.crest-col,
 .classification-table tbody tr:hover td:last-child {
   background: var(--border);
