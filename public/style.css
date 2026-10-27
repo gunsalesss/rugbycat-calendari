@@ -194,6 +194,33 @@ input:focus {
   border-color: var(--accent);
   color: var(--accent);
   background: rgba(216, 171, 74, 0.1);
+  padding-right: 30px;
+}
+
+.date-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.date-clear:hover {
+  background: rgba(216, 171, 74, 0.18);
+}
+
+.date-clear[hidden] {
+  display: none;
 }
 
 .flatpickr-day.selected,
