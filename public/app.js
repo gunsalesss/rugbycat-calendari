@@ -9,7 +9,6 @@ const tabBtns = document.querySelectorAll('.tab-btn');
 const tabPanels = document.querySelectorAll('.tab-panel');
 const classificationStatusEl = document.getElementById('classificationStatus');
 const classificationEl = document.getElementById('classification');
-const nextJornadaSection = document.getElementById('nextJornadaSection');
 
 let datePicker;
 
@@ -127,7 +126,20 @@ function renderMatches(matches) {
     groups.get(m.jornada).push(m);
   }
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+  let dividerInserted = false;
+
   for (const [jornada, group] of groups) {
+    const isFutureGroup = group.some((m) => m.isoDate >= todayIso);
+    if (isFutureGroup && !dividerInserted) {
+      const divider = document.createElement('div');
+      divider.id = 'nextJornadaDivider';
+      divider.className = 'jornada-divider';
+      divider.textContent = 'Propera jornada';
+      matchesEl.appendChild(divider);
+      dividerInserted = true;
+    }
+
     const section = document.createElement('div');
     section.className = 'jornada-group';
 
@@ -143,48 +155,10 @@ function renderMatches(matches) {
   }
 }
 
-function getNextJornadaMatches(matches) {
-  const todayIso = new Date().toISOString().slice(0, 10);
-  const upcoming = matches.filter((m) => m.isoDate >= todayIso);
-  if (!upcoming.length) return null;
-
-  const sorted = [...upcoming].sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime));
-  const jornadaName = sorted[0].jornada;
-  return matches.filter((m) => m.jornada === jornadaName);
-}
-
-function renderNextJornada(matches) {
-  const group = getNextJornadaMatches(matches);
-
-  if (!group || !group.length) {
-    nextJornadaSection.classList.add('hidden');
-    nextJornadaSection.innerHTML = '';
-    return;
-  }
-
-  const card = document.createElement('div');
-  card.className = 'next-jornada-card';
-  card.innerHTML = `
-    <span class="next-jornada-badge">⏭️ Propera jornada</span>
-    <h2 class="next-jornada-title">${group[0].jornada || 'Sense jornada'}</h2>
-  `;
-  for (const m of group) {
-    card.appendChild(buildMatchCard(m));
-  }
-
-  nextJornadaSection.innerHTML = '';
-  nextJornadaSection.appendChild(card);
-  nextJornadaSection.classList.remove('hidden');
-}
-
-async function loadNextJornada() {
-  try {
-    const res = await fetch('/api/matches');
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Error desconegut');
-    renderNextJornada(data.matches);
-  } catch (err) {
-    nextJornadaSection.classList.add('hidden');
+function scrollToNextJornada() {
+  const divider = document.getElementById('nextJornadaDivider');
+  if (divider) {
+    divider.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
@@ -301,7 +275,6 @@ teamSelect.addEventListener('change', () => {
 const DEFAULT_TEAM = 'CR SPARTANS';
 
 initDatePicker();
-loadNextJornada();
 loadTeams()
   .then(() => {
     if ([...teamSelect.options].some((opt) => opt.value === DEFAULT_TEAM)) {
@@ -309,4 +282,5 @@ loadTeams()
     }
     return loadAvailableDates(teamSelect.value);
   })
-  .then(loadMatches);
+  .then(loadMatches)
+  .then(scrollToNextJornada);
