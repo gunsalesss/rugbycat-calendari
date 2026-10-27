@@ -67,23 +67,24 @@ function isScheduleConfirmed(match) {
   return Boolean(match.time && match.time !== '00:00' && match.field);
 }
 
-function matchStatusColor(match) {
-  if (match.status === 'postponed') return 'status-red';
-  if (match.status === 'played') return 'status-green';
-  return isScheduleConfirmed(match) ? 'status-green' : 'status-orange';
+function matchRowStatus(match) {
+  if (match.status === 'postponed') return 'ajornat';
+  if (match.status === 'played') return 'jugat';
+  return isScheduleConfirmed(match) ? 'confirmat' : 'pendent';
 }
 
 function formatStatus(match) {
-  if (match.status === 'played') {
-    return `<div class="score">${match.score}</div>`;
+  const state = matchRowStatus(match);
+  if (state === 'jugat') {
+    return `<div class="score">${match.score}</div><div class="status-label tag-jugat">Jugat</div>`;
   }
-  if (match.status === 'postponed') {
-    return `<div class="status-label status-red">Ajornat</div>`;
+  if (state === 'ajornat') {
+    return `<div class="status-label tag-ajornat">Ajornat</div>`;
   }
-  if (isScheduleConfirmed(match)) {
-    return `<div class="status-label status-green">Confirmat</div>`;
+  if (state === 'confirmat') {
+    return `<div class="time">${match.time}</div><div class="status-label tag-confirmat">Confirmat</div>`;
   }
-  return `<div class="status-label status-orange">Per confirmar</div>`;
+  return `<div class="status-label tag-pendent">Per confirmar</div>`;
 }
 
 function teamBlock(name, logoUrl, side) {
@@ -96,17 +97,17 @@ function teamBlock(name, logoUrl, side) {
 
 function buildMatchCard(m) {
   const card = document.createElement('div');
-  card.className = 'match-card ' + matchStatusColor(m);
+  card.className = 'match-row status-' + matchRowStatus(m);
 
   card.innerHTML = `
     ${teamBlock(m.homeTeam, m.homeLogoUrl, 'home')}
     <div class="result">${formatStatus(m)}</div>
     ${teamBlock(m.awayTeam, m.awayLogoUrl, 'away')}
     <div class="meta">
-      <span>📅 <strong>${m.date}</strong></span>
-      <span>🕒 <strong>${m.time || 'Per confirmar'}</strong></span>
-      <span>📍 <strong>${m.field || 'Per confirmar'}</strong></span>
-      ${m.referee ? `<span>🧑‍⚖️ ${m.referee}</span>` : ''}
+      <span>${m.date}</span>
+      <span>${m.time && m.time !== '00:00' ? m.time : 'Hora per confirmar'}</span>
+      <span>${m.field || 'Camp per confirmar'}</span>
+      ${m.referee ? `<span>Àrbitre: ${m.referee}</span>` : ''}
       ${m.actPdfUrl ? `<span><a href="${m.actPdfUrl}" target="_blank" rel="noopener">Acta PDF</a></span>` : ''}
     </div>
   `;
