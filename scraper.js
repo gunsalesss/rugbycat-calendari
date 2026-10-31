@@ -40,7 +40,7 @@ function scrapeCalendarHtml(html) {
         const referee = homeCell.find('small.text-success').first().text().trim() || null;
 
         const homeLogo = $(cells[2]).find('img').attr('src');
-        const homeLogoUrl = applyLocalLogo(homeTeam, homeLogo ? BASE_URL + homeLogo : null, TEAM_LOGOS);
+        const homeLogoUrl = homeLogo ? BASE_URL + homeLogo : null;
 
         const resultCell = $(cells[3]);
         const resultLink = resultCell.find('a font').first().text().trim();
@@ -59,7 +59,7 @@ function scrapeCalendarHtml(html) {
         const field = awayCell.find('small.text-success').first().text().trim() || null;
 
         const awayLogo = $(cells[4]).find('img').attr('src');
-        const awayLogoUrl = applyLocalLogo(awayTeam, awayLogo ? BASE_URL + awayLogo : null, TEAM_LOGOS);
+        const awayLogoUrl = awayLogo ? BASE_URL + awayLogo : null;
 
         const actPdfPath = $(cells[6]).find('a.fa-file-pdf-o').attr('href');
         const actPdfUrl = actPdfPath ? BASE_URL + actPdfPath : null;
@@ -132,7 +132,7 @@ function scrapeClassificationHtml(html) {
     const position = Number($(cells[0]).text().trim());
     const team = $(cells[1]).find('span').first().text().trim();
     const logo = $(cells[1]).find('img').attr('src');
-    const logoUrl = applyLocalLogo(team, logo ? BASE_URL + logo : null, TEAM_LOGOS);
+    const logoUrl = logo ? BASE_URL + logo : null;
     const num = (i) => Number($(cells[i]).text().trim());
 
     standings.push({
@@ -172,22 +172,37 @@ function withPlayoffMatches(matches) {
   return [...matches, ...buildPlayoffMatches()].sort((a, b) => a.isoDateTime.localeCompare(b.isoDateTime));
 }
 
+// Substitueix l'URL de matchready.es per l'escut local corresponent quan
+// en tenim un de desat (vegeu teamLogos.js i scripts/download-team-logos.js).
+function withLocalLogos(matches) {
+  return matches.map((m) => ({
+    ...m,
+    homeLogoUrl: applyLocalLogo(m.homeTeam, m.homeLogoUrl, TEAM_LOGOS),
+    awayLogoUrl: applyLocalLogo(m.awayTeam, m.awayLogoUrl, TEAM_LOGOS),
+  }));
+}
+
+function withLocalLogosInClassification(standings) {
+  return standings.map((s) => ({ ...s, logoUrl: applyLocalLogo(s.team, s.logoUrl, TEAM_LOGOS) }));
+}
+
 async function fetchMatches() {
   const html = await fetchCompetitionHtml();
-  return withPlayoffMatches(scrapeCalendarHtml(html));
+  return withLocalLogos(withPlayoffMatches(scrapeCalendarHtml(html)));
 }
 
 async function fetchCompetitionData() {
   const html = await fetchCompetitionHtml();
   return {
-    matches: withPlayoffMatches(scrapeCalendarHtml(html)),
-    classification: scrapeClassificationHtml(html),
+    matches: withLocalLogos(withPlayoffMatches(scrapeCalendarHtml(html))),
+    classification: withLocalLogosInClassification(scrapeClassificationHtml(html)),
   };
 }
 
 module.exports = {
   fetchMatches,
   fetchCompetitionData,
+  fetchCompetitionHtml,
   scrapeCalendarHtml,
   scrapeClassificationHtml,
   SOURCE_URL,
