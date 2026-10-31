@@ -1,7 +1,9 @@
 const cheerio = require('cheerio');
+const { loadTeamLogos, applyLocalLogo } = require('./teamLogos');
 
 const SOURCE_URL = 'https://matchready.es/rugbycat/web/ca/public/calendar/56/37/combined/calendar/';
 const BASE_URL = 'https://matchready.es';
+const TEAM_LOGOS = loadTeamLogos();
 
 function parseDateTime(dateText, timeText) {
   // dateText: dd/mm/yyyy, timeText: hh:mm
@@ -38,7 +40,7 @@ function scrapeCalendarHtml(html) {
         const referee = homeCell.find('small.text-success').first().text().trim() || null;
 
         const homeLogo = $(cells[2]).find('img').attr('src');
-        const homeLogoUrl = homeLogo ? BASE_URL + homeLogo : null;
+        const homeLogoUrl = applyLocalLogo(homeTeam, homeLogo ? BASE_URL + homeLogo : null, TEAM_LOGOS);
 
         const resultCell = $(cells[3]);
         const resultLink = resultCell.find('a font').first().text().trim();
@@ -52,12 +54,12 @@ function scrapeCalendarHtml(html) {
           status = 'postponed';
         }
 
-        const awayLogo = $(cells[4]).find('img').attr('src');
-        const awayLogoUrl = awayLogo ? BASE_URL + awayLogo : null;
-
         const awayCell = $(cells[5]);
         const awayTeam = awayCell.find('font').first().text().trim();
         const field = awayCell.find('small.text-success').first().text().trim() || null;
+
+        const awayLogo = $(cells[4]).find('img').attr('src');
+        const awayLogoUrl = applyLocalLogo(awayTeam, awayLogo ? BASE_URL + awayLogo : null, TEAM_LOGOS);
 
         const actPdfPath = $(cells[6]).find('a.fa-file-pdf-o').attr('href');
         const actPdfUrl = actPdfPath ? BASE_URL + actPdfPath : null;
@@ -130,7 +132,7 @@ function scrapeClassificationHtml(html) {
     const position = Number($(cells[0]).text().trim());
     const team = $(cells[1]).find('span').first().text().trim();
     const logo = $(cells[1]).find('img').attr('src');
-    const logoUrl = logo ? BASE_URL + logo : null;
+    const logoUrl = applyLocalLogo(team, logo ? BASE_URL + logo : null, TEAM_LOGOS);
     const num = (i) => Number($(cells[i]).text().trim());
 
     standings.push({
